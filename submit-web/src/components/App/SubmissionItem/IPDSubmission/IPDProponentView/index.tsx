@@ -96,12 +96,16 @@ export const IPDSubmissionProponentView = () => {
   });
 
   const handleCompleteForm = (formData: IPDSubmissionForm) => {
-    saveSubmission(formData, SUBMISSION_ITEM_STATUS.COMPLETED.value);
+    if (!formData.ipd?.length) {
+      saveSubmission(formData, submissionItem?.status);
+    } else {
+      saveSubmission(formData, SUBMISSION_ITEM_STATUS.COMPLETED.value);
+    }
   };
 
   const saveSubmission = async (
     _formData: IPDSubmissionForm,
-    status: SubmissionItemStatus,
+    status?: SubmissionItemStatus,
   ) => {
     try {
       setIsBackdropOpen(true);

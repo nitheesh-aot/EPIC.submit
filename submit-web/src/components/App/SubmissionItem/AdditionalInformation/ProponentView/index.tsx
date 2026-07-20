@@ -11,7 +11,10 @@ import {
 import { useMemo, useState } from "react";
 import Form from "@/components/Shared/Forms/common";
 import { FormProvider, useForm } from "react-hook-form";
-import { AdditionalInformationForm, additionalInformationSchema } from "./constants";
+import {
+  AdditionalInformationForm,
+  additionalInformationSchema,
+} from "./constants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useQueryClient } from "@tanstack/react-query";
 import { SubmissionItem } from "@/models/SubmissionItem";
@@ -63,7 +66,8 @@ export const AdditionalInformationProponentView = () => {
       uploadDocuments: documentSubmissions
         .filter(
           (submission) =>
-            submission.submitted_document?.folder === S3_FOLDER.UPLOAD_DOCUMENTS.value,
+            submission.submitted_document?.folder ===
+            S3_FOLDER.UPLOAD_DOCUMENTS.value,
         )
         .map((submission) => submission.submitted_document?.url),
     };
@@ -89,12 +93,16 @@ export const AdditionalInformationProponentView = () => {
   });
 
   const handleCompleteForm = (formData: AdditionalInformationForm) => {
-    saveSubmission(formData, SUBMISSION_ITEM_STATUS.COMPLETED.value);
+    if (!formData.uploadDocuments?.length) {
+      saveSubmission(formData, submissionItem?.status);
+    } else {
+      saveSubmission(formData, SUBMISSION_ITEM_STATUS.COMPLETED.value);
+    }
   };
 
   const saveSubmission = async (
     _formData: AdditionalInformationForm,
-    status: SubmissionItemStatus,
+    status?: SubmissionItemStatus,
   ) => {
     try {
       setIsBackdropOpen(true);
@@ -143,7 +151,7 @@ export const AdditionalInformationProponentView = () => {
         <Form methods={methods}>
           <Grid container spacing={BCDesignTokens.layoutMarginMedium}>
             <Grid item xs={12}>
-              <GenericDocumentUploadSection 
+              <GenericDocumentUploadSection
                 sections={documentUploadSections}
                 title="Upload Documents"
               />

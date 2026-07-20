@@ -100,7 +100,14 @@ export const EngagementPlanProponentView = () => {
   });
 
   const handleCompleteForm = (formData: EngagementPlanSubmissionForm) => {
-    saveSubmission(formData, SUBMISSION_ITEM_STATUS.COMPLETED.value);
+    if (!formData.engagementPlan?.length) {
+      saveSubmission(
+        formData,
+        SUBMISSION_ITEM_STATUS.PARTIALLY_COMPLETED.value,
+      );
+    } else {
+      saveSubmission(formData, SUBMISSION_ITEM_STATUS.COMPLETED.value);
+    }
   };
 
   const saveSubmission = async (

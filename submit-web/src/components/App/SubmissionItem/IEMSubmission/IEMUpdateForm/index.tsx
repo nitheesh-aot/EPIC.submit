@@ -1,10 +1,11 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { SubmissionFormContainer } from "@/components/App/SubmissionItem/SubmissionFormContainer";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { S3_FOLDER } from "@/hooks/api/useObjectStorage";
 import DocumentsTable from "@/components/App/SubmissionItem/DocumentsTable";
 import { useState } from "react";
 import { UnfinishedUploadsCheck } from "@/components/Shared/UnfinishedUploadsCheck";
+import { BCDesignTokens } from "epic.theme";
 
 export const IEMUpdateForm = () => {
   const navigate = useNavigate();
@@ -22,11 +23,39 @@ export const IEMUpdateForm = () => {
 
   return (
     <SubmissionFormContainer>
-      <Box width={"100%"}>
-        <DocumentsTable
-          folder={S3_FOLDER.SUPPORTING_DOCUMENTS.value}
-          setIsPendingUpload={setIsPendingUpload}
-        />
+      <Box width={"100%"} display="flex" flexDirection="column" gap={4}>
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: BCDesignTokens.typographyColorPrimary,
+            }}
+          >
+            Independent Environmental Monitor Terms of Engagement
+          </Typography>
+          <DocumentsTable
+            folder={S3_FOLDER.IEMS.value}
+            setIsPendingUpload={setIsPendingUpload}
+          />
+        </Box>
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: BCDesignTokens.typographyColorPrimary,
+            }}
+          >
+            Supporting Documents
+          </Typography>
+          <DocumentsTable
+            folder={S3_FOLDER.SUPPORTING_DOCUMENTS.value}
+            setIsPendingUpload={setIsPendingUpload}
+          />
+        </Box>
       </Box>
       <UnfinishedUploadsCheck customCondition={isPendingUpload}>
         <Button

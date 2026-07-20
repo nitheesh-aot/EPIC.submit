@@ -8,7 +8,15 @@ import {
   GenericDocumentUploadSection,
   UploadSectionConfig,
 } from "@/components/App/DocumentUpload/GenericDocumentUploadSection";
-import { useCallback, useEffect, useMemo, useRef, useState, lazy, Suspense } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  lazy,
+  Suspense,
+} from "react";
 import Form from "@/components/Shared/Forms/common";
 import { FormProvider, useForm } from "react-hook-form";
 import { Submission } from "@/models/Submission";
@@ -27,12 +35,19 @@ import {
   SubmissionItemStatus,
 } from "@/models/Submission";
 import { deleteDocument, S3_FOLDER } from "@/hooks/api/useObjectStorage";
-import { useSaveSubmission, useDeleteSubmission } from "@/hooks/api/useSubmissions";
+import {
+  useSaveSubmission,
+  useDeleteSubmission,
+} from "@/hooks/api/useSubmissions";
 import { useGetSubmissionPackage } from "@/hooks/api/usePackages";
 import { notify } from "@/components/Shared/Snackbar/snackbarStore";
 import { isAxiosError } from "axios";
 import SubmissionActionButtons from "@/components/App/SubmissionItem/SubmissionActionButtons";
-import { useGetGeoUploads, useApproveGeoUpload, GeoUpload } from "@/hooks/api/useGeo";
+import {
+  useGetGeoUploads,
+  useApproveGeoUpload,
+  GeoUpload,
+} from "@/hooks/api/useGeo";
 import { useFileStore } from "@/store/fileStore";
 // Lazy-load the map modal so maplibre-gl is not downloaded until first use
 const MapPreviewModal = lazy(() =>
@@ -40,8 +55,6 @@ const MapPreviewModal = lazy(() =>
     default: m.MapPreviewModal,
   })),
 );
-
-
 
 export const GeoSpatialProponentView = () => {
   const {
@@ -66,7 +79,9 @@ export const GeoSpatialProponentView = () => {
   const navigate = useNavigate();
 
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
-  const [previewDocument, setPreviewDocument] = useState<Submission | null>(null);
+  const [previewDocument, setPreviewDocument] = useState<Submission | null>(
+    null,
+  );
   const [reviewQueue, setReviewQueue] = useState<Submission[]>([]);
 
   const { data: geoUploads } = useGetGeoUploads({
@@ -129,12 +144,16 @@ export const GeoSpatialProponentView = () => {
   });
 
   const handleCompleteForm = (formData: GeoSpatialSubmissionForm) => {
-    saveSubmission(formData, SUBMISSION_ITEM_STATUS.COMPLETED.value);
+    if (!formData.geospatial?.length) {
+      saveSubmission(formData, submissionItem?.status);
+    } else {
+      saveSubmission(formData, SUBMISSION_ITEM_STATUS.COMPLETED.value);
+    }
   };
 
   const saveSubmission = async (
     _formData: GeoSpatialSubmissionForm,
-    status: SubmissionItemStatus,
+    status?: SubmissionItemStatus,
   ) => {
     try {
       setIsBackdropOpen(true);
@@ -270,9 +289,7 @@ export const GeoSpatialProponentView = () => {
     [uploads],
   );
   const isReviewPending =
-    previewDocument !== null ||
-    reviewQueue.length > 0 ||
-    hasUnapprovedUploads;
+    previewDocument !== null || reviewQueue.length > 0 || hasUnapprovedUploads;
 
   const documentUploadSections: UploadSectionConfig[] = useMemo(
     () => [
